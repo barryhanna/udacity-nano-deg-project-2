@@ -2,7 +2,18 @@
  * Create a list that holds all of your cards
  */
 
-var deck = document.querySelectorAll(".card");
+const DIAMOND = "fa-diamond",
+      PLANE   = "fa-paper-plane-o",
+      ANCHOR  = "fa-anchor",
+      BOLT    = "fa-bolt",
+      CUBE    = "fa-cube",
+      BICYCLE = "fa-bicycle",
+      LEAF    = "fa-leaf",
+      BOMB    = "fa-bomb";
+      
+
+var deck = [DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB,
+            DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB];
 
 /*
  * Display the cards on the page
@@ -11,7 +22,26 @@ var deck = document.querySelectorAll(".card");
  *   - add each card's HTML to the page
  */
 
-restart();
+
+function generateDeck() {
+    deck = shuffle(deck);
+    let deckDisplay = document.getElementsByClassName("deck")[0];
+    let deckHTML = "";
+
+    while(deckDisplay.firstChild) {
+        deckDisplay.removeChild(deckDisplay.firstChild);
+    }
+
+    for(const card of deck) {
+        deckHTML += `<li class="card"><i class="fa ${card}"></i></li>`;
+    }
+
+    deckDisplay.innerHTML = deckHTML;
+}
+
+generateDeck();
+
+
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -28,28 +58,17 @@ function shuffle(array) {
     return array;
 }
 
-document.getElementsByClassName("restart")[0].addEventListener("click", restart);
-
-function restart() {
-    for(const card of deck) {
-        card.classList.remove("match");
-        card.classList.remove("open");
-        card.classList.remove("show");
-    }
-    shuffle(deck);
-    setupCards();
-}
-
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one) */
+
+document.getElementsByClassName("restart")[0].addEventListener("click", generateDeck);
 
 function setupCards() {
     for(const card of deck) {
         card.addEventListener("click", cardClick);
     }
-} 
-
+}
 
 function cardClick(event) {
     console.log("Click event: " + event.target);
