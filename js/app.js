@@ -10,6 +10,7 @@ var deck = document.querySelectorAll(".card");
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
+
 restart();
 
 // Shuffle function from http://stackoverflow.com/a/2450976
@@ -36,12 +37,27 @@ function restart() {
         card.classList.remove("show");
     }
     shuffle(deck);
+    setupCards();
 }
 
 /*
  * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
+ *  - display the card's symbol (put this functionality in another function that you call from this one) */
+
+function setupCards() {
+    for(const card of deck) {
+        card.addEventListener("click", cardClick);
+    }
+} 
+
+
+function cardClick(event) {
+    console.log("Click event: " + event.target);
+    event.target.classList.add("open");
+    event.target.classList.add("show");
+}
+
+ /*  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
  *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
