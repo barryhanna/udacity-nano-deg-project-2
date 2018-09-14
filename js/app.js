@@ -37,6 +37,7 @@ function generateDeck() {
     }
 
     deckDisplay.innerHTML = deckHTML;
+    addCardEventListeners();
 }
 
 generateDeck();
@@ -64,8 +65,10 @@ function shuffle(array) {
 
 document.getElementsByClassName("restart")[0].addEventListener("click", generateDeck);
 
-function setupCards() {
-    for(const card of deck) {
+function addCardEventListeners() {
+    let cards = document.querySelectorAll(".card");
+    for(const card of cards) {
+        console.log("Click event: " + card);
         card.addEventListener("click", cardClick);
     }
 }
