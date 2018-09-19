@@ -11,9 +11,9 @@ const DIAMOND = "fa-diamond",
       LEAF    = "fa-leaf",
       BOMB    = "fa-bomb";
 
-var openCards = [];
+let openCards = [];
 
-var deck = [DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB,
+let deck = [DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB,
             DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB];
 
 /*
@@ -49,6 +49,8 @@ function generateDeck() {
                    <li><i class="fa fa-star"></i></li>
                    <li><i class="fa fa-star"></i></li>`;
     document.getElementsByClassName("stars")[0].innerHTML = stars;
+    
+    startTimer();
 }
 
 generateDeck();
@@ -84,20 +86,50 @@ function addCardEventListeners() {
 }
 
 function cardClick(event) {
-    event.target.classList.add("open");
-    event.target.classList.add("show");
+    event.target.classList.add("open","show");
     checkMatch(event.target);
+    if(isGameOver()) {
+        let gameOverDialog = document.getElementById("gameOverDialog");
+        gameOverDialog.show();
+    };
 }
 
+function isGameOver() {
+    // matched cards should be 16.
+    const numMatchedCards = document.querySelectorAll(".match").length;
+    console.log(numMatchedCards);
+    if(numMatchedCards < 16) { 
+        return false; 
+    } else {
+        console.log("Game over");
+        return true;
+    }
+}
+
+var timer;
+
+function startTimer() {
+    let timeElement = document.getElementById("time");
+    let seconds = 0;
+    timer = setInterval(function() {
+        seconds += 1;
+        timeElement.innerText = seconds;
+    },1000);
+}
+
+function stopTimer() {
+    clearInterval(timer);
+}
  /*  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
  */
 
-function hideOpenCards(card) {
-    for(card of openCards) {
-        card.classList.remove("show");
-        card.classList.remove("open");
-    }
+function hideOpenCards() {
+    openCards[0].classList.remove("show");
+    openCards[0].classList.remove("open");
+    openCards[1].classList.remove("show");
+    openCards[1].classList.remove("open");
+    clearOpenCardList();
 }
 
 function checkMatch(card) {
@@ -108,13 +140,13 @@ function checkMatch(card) {
         addToOpenCardList(card);
         console.log(cardTemplate);
     } else {
-        // if the same card is clicked then just ignore.
+        // if the same card is clicked, then just ignore.
         if(openCards[0] === card) {
             return;
         }
         addToOpenCardList(card);
         console.log(cardTemplate);
-        if(openCards[0].firstChild.getAttribute("class") ===                        openCards[1].firstChild.getAttribute("class")) {
+        if(cardsMatch(openCards[0],openCards[1])) {
             console.log("Match");
             cardsMatched();
             removeMatchedEventListeners();
@@ -122,12 +154,19 @@ function checkMatch(card) {
             return true;
         } else {
             console.log("No match");
-            hideOpenCards(card);
-            clearOpenCardList();
             removeMoveStar();
+            setTimeout(hideOpenCards,500);
+            clearTimeout(hideOpenCards);
             return false;
         }
     }
+}
+
+function cardsMatch(cardOne, cardTwo) {
+    if(cardOne.firstChild.getAttribute("class") ===                        cardTwo.firstChild.getAttribute("class")) {
+        return true;
+    }
+    return false;
 }
 
 function removeMatchedEventListeners() {
@@ -152,6 +191,7 @@ function removeMoveStar() {
     const starList = document.getElementsByClassName("stars")[0];
     // don't remove if there are no more moves.
     if(starList.childElementCount < 1) { return; }
+
     starList.removeChild(starList.firstElementChild);
     
     let moves = document.getElementsByClassName("moves")[0].innerText.toString();
