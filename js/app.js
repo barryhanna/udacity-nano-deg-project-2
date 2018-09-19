@@ -24,6 +24,8 @@ let deck = [DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB,
  */
 
 function generateDeck() {
+    // avoid creating new timers
+    stopTimer();
     deck = shuffle(deck);
     let deckDisplay = document.getElementsByClassName("deck")[0];
     let deckHTML = "";
