@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Create a list that holds all of your cards
  */
@@ -15,6 +16,18 @@ let openCards = [];
 
 let deck = [DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB,
             DIAMOND, PLANE, ANCHOR, BOLT, CUBE, BICYCLE, LEAF, BOMB];
+
+let totalMovesMade = 0;
+
+// star ratings for performance, based on the number of moves
+// made.
+
+const PERF_GOLD = 3;
+const PERF_SILVER = 2;
+const PERF_BRONZE = 1;
+
+// the player's current performance rating. Begins at 3 stars
+let playerPerformance = PERF_GOLD;
 
 /*
  * Display the cards on the page
@@ -88,12 +101,21 @@ function addCardEventListeners() {
 }
 
 function cardClick(event) {
+    totalMovesMade += 1;
+    if(totalMovesMade < 20) {
+        
+    } else if(totalMovesMade >= 20 || totalMovesMade < 30) {
+        
+    }
     event.target.classList.add("open","show");
     checkMatch(event.target);
-    if(isGameOver()) {
-        let gameOverDialog = document.getElementById("gameOverDialog");
-        gameOverDialog.show();
-    };
+//    if(isGameOver()) {
+//        let gameOverDialog = document.getElementById("gameOverDialog");
+//        gameOverDialog.show();
+//    }
+    updateMoves();
+    updatePerformance();
+    updateStars();
 }
 
 function isGameOver() {
@@ -156,7 +178,6 @@ function checkMatch(card) {
             return true;
         } else {
             console.log("No match");
-            removeMoveStar();
             setTimeout(hideOpenCards,500);
             clearTimeout(hideOpenCards);
             return false;
@@ -165,7 +186,7 @@ function checkMatch(card) {
 }
 
 function cardsMatch(cardOne, cardTwo) {
-    if(cardOne.firstChild.getAttribute("class") ===                        cardTwo.firstChild.getAttribute("class")) {
+    if(cardOne.firstChild.getAttribute("class") === cardTwo.firstChild.getAttribute("class")) {
         return true;
     }
     return false;
@@ -177,7 +198,7 @@ function removeMatchedEventListeners() {
 }
 
 function clearOpenCardList() {
-    while(openCards.pop()) { }
+    openCards = [];
 }
 
 function addToOpenCardList(card) {
@@ -189,16 +210,28 @@ function cardsMatched() {
     openCards[1].classList.add("match");
 }
 
-function removeMoveStar() {
-    const starList = document.getElementsByClassName("stars")[0];
-    // don't remove if there are no more moves.
-    if(starList.childElementCount < 1) { return; }
+function updatePerformance() {
+    // based upon the number of moves
+    // update the number of stars shown
+    if(totalMovesMade > 19 && totalMovesMade < 30) {
+        playerPerformance = PERF_SILVER;
+    } else if(totalMovesMade >= 30) {
+        playerPerformance = PERF_BRONZE;
+    }
+}
 
-    starList.removeChild(starList.firstElementChild);
-    
-    let moves = document.getElementsByClassName("moves")[0].innerText.toString();
-    moves -= 1;
-    document.getElementsByClassName("moves")[0].innerText = moves;
+function updateMoves() {
+    document.getElementsByClassName("moves")[0].innerText = totalMovesMade;
+}
+
+function updateStars() {
+    let starList = document.getElementsByClassName("stars")[0];
+    const numStars = starList.childElementCount;
+    if(numStars === PERF_GOLD && playerPerformance < PERF_GOLD) {
+       starList.removeChild(starList.firstElementChild); 
+    } else if(numStars === PERF_SILVER && playerPerformance < PERF_SILVER) {
+        starList.removeChild(starList.firstElementChild); 
+    }
 }
 
  
