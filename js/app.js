@@ -26,6 +26,7 @@ const PERF_SILVER = 2;
 const PERF_BRONZE = 1;
 
 // the player's current performance rating. Begins at 3 stars
+// will go to silver if moves over 20, and bronze if over 30.
 let playerPerformance = PERF_GOLD;
 
 /*
@@ -33,8 +34,8 @@ let playerPerformance = PERF_GOLD;
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
+ *   - starts the game timer.
  */
-
 function generateDeck() {
     // avoid creating new timers
     stopTimer();
@@ -57,8 +58,8 @@ function generateDeck() {
     
     addCardEventListeners();
     
-    // reset 3 moves and stars
-    document.getElementsByClassName("moves")[0].innerText = 3;
+    // reset moves and stars
+    document.getElementsByClassName("moves")[0].innerText = 0;
     const stars = `<li><i class="fa fa-star"></i></li>
                    <li><i class="fa fa-star"></i></li>
                    <li><i class="fa fa-star"></i></li>`;
@@ -88,10 +89,14 @@ function shuffle(array) {
 
 /*
  * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one) */
+ *  - display the card's symbol (put this functionality in another function that you call from this one) 
+ */
 
 document.getElementsByClassName("restart")[0].addEventListener("click", generateDeck);
 
+/*
+* Add event listeners for all cards.
+*/
 function addCardEventListeners() {
     let cards = document.querySelectorAll(".card");
     for(const card of cards) {
@@ -99,6 +104,14 @@ function addCardEventListeners() {
     }
 }
 
+/*
+* Card click event. 
+* Adds the open and show classes to the clicked card.
+* With each click, the user's moves, performance, and stars 
+* are updated.
+* Also checks if the game is over, if it is then
+* the timer is stopped and the game over screen is displayed.
+*/
 function cardClick(event) {
     totalMovesMade += 1;
     if(totalMovesMade < 20) {
@@ -117,6 +130,10 @@ function cardClick(event) {
     }
 }
 
+/*
+* Checks if the game is over. This is determined by checking 
+* if there are 16 elements with the ".match" class. 
+*/
 function isGameOver() {
     // matched cards should be 16.
     const numMatchedCards = document.querySelectorAll(".match").length;
@@ -131,6 +148,11 @@ function isGameOver() {
 
 var timer;
 
+/*
+* Start the timer (interval of 1000=1s). This will
+* continue to update the timer on the screen.
+* TODO: fix to display for minutes if seconds > 59.
+*/
 function startTimer() {
     let timeElement = document.getElementById("time");
     let seconds = 0;
@@ -140,13 +162,16 @@ function startTimer() {
     },1000);
 }
 
+/*
+* Stop timer
+*/
 function stopTimer() {
     clearInterval(timer);
 }
+
  /*  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
  */
-
 function hideOpenCards() {
     openCards[0].classList.remove("show");
     openCards[0].classList.remove("open");
@@ -155,13 +180,17 @@ function hideOpenCards() {
     clearOpenCardList();
 }
 
+/*
+* See if any cards have been matched. If it's the first card 
+* clicked, then add it to the open list. If it's the second card,
+* check if the cards match. 
+*/
 function checkMatch(card) {
     // if there are no cards on the open list,
     // return false after adding the open card to the list.
     const cardTemplate = `${card.firstChild.getAttribute("class")} added to open card list.`;
     if(openCards.length < 1) {
         addToOpenCardList(card);
-        console.log(cardTemplate);
     } else {
         // if the same card is clicked, then just ignore.
         if(openCards[0] === card) {
@@ -170,13 +199,11 @@ function checkMatch(card) {
         addToOpenCardList(card);
         console.log(cardTemplate);
         if(cardsMatch(openCards[0],openCards[1])) {
-            console.log("Match");
             cardsMatched();
             removeMatchedEventListeners();
             clearOpenCardList();
             return true;
         } else {
-            console.log("No match");
             setTimeout(hideOpenCards,500);
             clearTimeout(hideOpenCards);
             return false;
@@ -184,6 +211,10 @@ function checkMatch(card) {
     }
 }
 
+/*
+* Check if the given cards match (by the classname they have).
+* Returns true or false.
+*/
 function cardsMatch(cardOne, cardTwo) {
     if(cardOne.firstChild.getAttribute("class") === cardTwo.firstChild.getAttribute("class")) {
         return true;
@@ -191,24 +222,40 @@ function cardsMatch(cardOne, cardTwo) {
     return false;
 }
 
+/*
+* When cards have been matched, the event listeners are
+* removed to prevent further events being generated.
+*/
 function removeMatchedEventListeners() {
     openCards[0].removeEventListener("click", cardClick);
     openCards[1].removeEventListener("click", cardClick);
 }
 
+/*
+* Remove all cards from the open cards list.
+*/
 function clearOpenCardList() {
     openCards = [];
 }
 
+/*
+* Add to the list of open cards.
+*/
 function addToOpenCardList(card) {
     openCards.push(card);
 }
 
+/*
+* Add the "match" class to cards that have been matched.
+*/
 function cardsMatched() {
     openCards[0].classList.add("match");
     openCards[1].classList.add("match");
 }
 
+/*
+* Add to the moves made.
+*/
 function updatePerformance() {
     // based upon the number of moves
     // update the number of stars shown
@@ -219,10 +266,16 @@ function updatePerformance() {
     }
 }
 
+/*
+* Add to the moves made displayed on screen.
+*/
 function updateMoves() {
     document.getElementsByClassName("moves")[0].innerText = totalMovesMade;
 }
 
+/*
+* Updates the stars displayed for the player's performance.
+*/
 function updateStars() {
     let starList = document.getElementsByClassName("stars")[0];
     const numStars = starList.childElementCount;
@@ -236,6 +289,10 @@ function updateStars() {
 var gameOverScreen = document.getElementById('gameOverScreen');
 var closeBtn = document.getElementsByClassName('close-btn')[0];
 
+/*
+* Update the elements of the game over screen with the 
+* latest information.
+*/
 function updateGameOverScreen() {
     const star = '<i class="fa fa-star"></i>';
     if(playerPerformance === PERF_GOLD) {
@@ -248,6 +305,9 @@ function updateGameOverScreen() {
     document.getElementsByClassName("game-time")[0].innerText = document.getElementById("time").innerText;
 }
 
+/*
+* Show the game over screen.
+*/
 function openGameOverScreen() {
     updateGameOverScreen();
 	gameOverScreen.style.display = "block";
@@ -255,6 +315,9 @@ function openGameOverScreen() {
 
 closeBtn.addEventListener('click', closeGameOverScreen);
 
+/*
+* Hides the game over screen and starts a new game.
+*/
 function closeGameOverScreen() {
 	gameOverScreen.style.display = "none";
     generateDeck();
@@ -262,15 +325,13 @@ function closeGameOverScreen() {
 
 window.addEventListener('click', clickOutside);
 
+/*
+* When clicking outside the game over screen
+*/
 function clickOutside(e) {
 	if(e.target === gameOverScreen) {
 		gameOverScreen.style.display = "none";
         generateDeck();
 	}
 }
- 
-/* *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
+
