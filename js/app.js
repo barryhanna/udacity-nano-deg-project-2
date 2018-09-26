@@ -108,13 +108,13 @@ function cardClick(event) {
     }
     event.target.classList.add("open","show");
     checkMatch(event.target);
-//    if(isGameOver()) {
-//        let gameOverDialog = document.getElementById("gameOverDialog");
-//        gameOverDialog.show();
-//    }
     updateMoves();
     updatePerformance();
     updateStars();
+    if(isGameOver()) {
+        stopTimer();
+        openGameOverScreen();
+    }
 }
 
 function isGameOver() {
@@ -238,7 +238,6 @@ var closeBtn = document.getElementsByClassName('close-btn')[0];
 
 function updateGameOverScreen() {
     const star = '<i class="fa fa-star"></i>';
-    console.log(`Player Perf: ${playerPerformance}`);
     if(playerPerformance === PERF_GOLD) {
         document.getElementsByClassName("game-perf")[0].innerHTML = `${star}${star}${star}`;
     } else if(playerPerformance === PERF_SILVER) {
@@ -258,6 +257,7 @@ closeBtn.addEventListener('click', closeGameOverScreen);
 
 function closeGameOverScreen() {
 	gameOverScreen.style.display = "none";
+    generateDeck();
 }
 
 window.addEventListener('click', clickOutside);
@@ -265,6 +265,7 @@ window.addEventListener('click', clickOutside);
 function clickOutside(e) {
 	if(e.target === gameOverScreen) {
 		gameOverScreen.style.display = "none";
+        generateDeck();
 	}
 }
  
