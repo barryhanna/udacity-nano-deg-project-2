@@ -234,6 +234,26 @@ function updateStars() {
     }
 }
 
+var gameOverScreen = document.getElementById('gameOverScreen');
+var closeBtn = document.getElementsByClassName('closeBtn')[0];
+
+function openGameOverScreen() {
+	gameOverScreen.style.display = "block";
+}
+
+closeBtn.addEventListener('click', closeGameOverScreen);
+
+function closeGameOverScreen() {
+	gameOverScreen.style.display = "none";
+}
+
+window.addEventListener('click', clickOutside);
+
+function clickOutside(e) {
+	if(e.target === gameOverScreen) {
+		gameOverScreen.style.display = "none";
+	}
+}
  
 /* *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
