@@ -1,4 +1,3 @@
-"use strict";
 /*
  * Create a list that holds all of your cards
  */
@@ -235,9 +234,23 @@ function updateStars() {
 }
 
 var gameOverScreen = document.getElementById('gameOverScreen');
-var closeBtn = document.getElementsByClassName('closeBtn')[0];
+var closeBtn = document.getElementsByClassName('close-btn')[0];
+
+function updateGameOverScreen() {
+    const star = '<i class="fa fa-star"></i>';
+    console.log(`Player Perf: ${playerPerformance}`);
+    if(playerPerformance === PERF_GOLD) {
+        document.getElementsByClassName("game-perf")[0].innerHTML = `${star}${star}${star}`;
+    } else if(playerPerformance === PERF_SILVER) {
+        document.getElementsByClassName("game-perf")[0].innerHTML = `${star}${star}`;
+    } else {
+        document.getElementsByClassName("game-perf")[0].innerHTML = `${star}`;
+    }
+    document.getElementsByClassName("game-time")[0].innerText = document.getElementById("time").innerText;
+}
 
 function openGameOverScreen() {
+    updateGameOverScreen();
 	gameOverScreen.style.display = "block";
 }
 
