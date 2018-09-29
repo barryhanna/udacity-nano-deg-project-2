@@ -137,11 +137,9 @@ function cardClick(event) {
 function isGameOver() {
     // matched cards should be 16.
     const numMatchedCards = document.querySelectorAll(".match").length;
-    console.log(numMatchedCards);
     if(numMatchedCards < 16) { 
         return false; 
     } else {
-        console.log("Game over");
         return true;
     }
 }
@@ -197,7 +195,6 @@ function checkMatch(card) {
             return;
         }
         addToOpenCardList(card);
-        console.log(cardTemplate);
         if(cardsMatch(openCards[0],openCards[1])) {
             cardsMatched();
             removeMatchedEventListeners();
