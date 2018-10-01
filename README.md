@@ -9,7 +9,7 @@
 
 This project is my implementation of the Memory Game project for Udacity's Front-end Development course. 
 
-###Game Instructions
+### Game Instructions
 
 To get started, open `index.html` and click on a card to begin the game. 
 
@@ -26,9 +26,9 @@ To fully experience this game you must have access to the following libraries:
 
 Player performance is rated on stars (all players begin with 3 stars):
 
-3. Less than 20 moves.
-2. Over 20 moves but less than 30.
-1. 30 and over.
+3 stars - Less than 20 moves.
+2 stars -  Over 20 moves but less than 30.
+1 star - 30 and over.
 
 There is also a timer recording the time taken (in seconds).
 
