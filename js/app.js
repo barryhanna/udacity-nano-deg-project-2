@@ -113,6 +113,11 @@ function addCardEventListeners() {
 * the timer is stopped and the game over screen is displayed.
 */
 function cardClick(event) {
+    if(openCards.length > 0) {
+        if(event.currentTarget === openCards[0]) {
+            return;
+        }
+    }
     totalMovesMade += 1;
     if(totalMovesMade < 20) {
         
