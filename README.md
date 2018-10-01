@@ -27,7 +27,9 @@ To fully experience this game you must have access to the following libraries:
 Player performance is rated on stars (all players begin with 3 stars):
 
 3 stars - Less than 20 moves.
+
 2 stars -  Over 20 moves but less than 30.
+
 1 star - 30 and over.
 
 There is also a timer recording the time taken (in seconds).
