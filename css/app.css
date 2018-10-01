@@ -65,20 +65,45 @@ h1 {
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
 }
 
+.deck .card:hover {
+    transform: scale(1.1);
+}
+
 .deck .card.open {
-    transform: rotateY(180);
     background: #02b3e4;
     cursor: default;
 }
 
 .deck .card.show {
     font-size: 33px;
+    animation: wobble 1s infinite;
 }
 
 .deck .card.match {
     cursor: default;
     background: #02ccba;
-    font-size: 33px;
+    animation: matchedCards 1s;
+}
+
+@keyframes matchedCards {
+    0% { font-size: 33px }
+    50% { font-size: 66px }
+    100% { font-size: 33px }
+}
+
+@keyframes wobble {
+    25% { 
+        transform: rotate(-5deg);
+    }
+    50% { 
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
 /*
