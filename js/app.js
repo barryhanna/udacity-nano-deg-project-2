@@ -64,7 +64,7 @@ function generateDeck() {
                    <li><i class="fa fa-star"></i></li>
                    <li><i class="fa fa-star"></i></li>`;
     document.getElementsByClassName("stars")[0].innerHTML = stars;
-    
+    totalMovesMade = 0;
     startTimer();
 }
 
