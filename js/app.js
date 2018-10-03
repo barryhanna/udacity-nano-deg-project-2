@@ -65,7 +65,7 @@ function generateDeck() {
                    <li><i class="fa fa-star"></i></li>`;
     document.getElementsByClassName("stars")[0].innerHTML = stars;
     totalMovesMade = 0;
-    clearOpenCardList();
+    openCards = [];
     startTimer();
 }
 
@@ -101,38 +101,11 @@ document.getElementsByClassName("restart")[0].addEventListener("click", generate
 function addCardEventListeners() {
     let cards = document.querySelectorAll(".card");
     for(const card of cards) {
-        card.addEventListener("click", cardClick);
-    }
-}
-
-/*
-* Card click event. 
-* Adds the open and show classes to the clicked card.
-* With each click, the user's moves, performance, and stars 
-* are updated.
-* Also checks if the game is over, if it is then
-* the timer is stopped and the game over screen is displayed.
-*/
-function cardClick(event) {
-    if(openCards.length > 0) {
-        if(event.currentTarget === openCards[0]) {
-            return;
+        // only add listeners to cards that haven't 
+        // been matched.
+        if(!card.classList.contains("match")) {
+            card.addEventListener("click", cardClick);
         }
-    }
-    totalMovesMade += 1;
-    if(totalMovesMade < 20) {
-        
-    } else if(totalMovesMade >= 20 || totalMovesMade < 30) {
-        
-    }
-    event.target.classList.add("open","show");
-    checkMatch(event.target);
-    updateMoves();
-    updatePerformance();
-    updateStars();
-    if(isGameOver()) {
-        stopTimer();
-        openGameOverScreen();
     }
 }
 
@@ -173,45 +146,71 @@ function stopTimer() {
     clearInterval(timer);
 }
 
+/*
+* Card click event. 
+* Adds the open and show classes to the clicked card.
+* With each click, the user's moves, performance, and stars 
+* are updated.
+* Also checks if the game is over, if it is then
+* the timer is stopped and the game over screen is displayed.
+*/
+function cardClick(event) {
+    
+    let card = event.currentTarget;
+    
+    // if the same card is clicked, then just ignore.
+    if(card.classList.contains("open")) {
+        return;
+    }
+    openCards.push(card);
+    card.classList.add("open","show");
+    totalMovesMade++;
+    
+    
+    if(openCards.length === 1) {
+        return;
+    }
+    if(openCards.length > 1) {
+        removeEventListeners();
+        if(cardsMatch(openCards[0],openCards[1])) {
+            cardsMatched();
+        } else {
+            openCards[0].classList.add("remove");
+            openCards[1].classList.add("remove");
+            setTimeout(hideOpenCards,500);
+        }
+        openCards = [];
+        
+    }
+    updateMoves();
+    updatePerformance();
+    updateStars();
+    
+    if(isGameOver()) {
+        stopTimer();
+        openGameOverScreen();
+    }
+}
+
+function removeEventListeners() {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(function(card) {
+        card.removeEventListener("click",cardClick);
+    });
+}
+
  /*  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
  */
 function hideOpenCards() {
-    openCards[0].classList.remove("show");
-    openCards[0].classList.remove("open");
-    openCards[1].classList.remove("show");
-    openCards[1].classList.remove("open");
-    clearOpenCardList();
-}
-
-/*
-* See if any cards have been matched. If it's the first card 
-* clicked, then add it to the open list. If it's the second card,
-* check if the cards match. 
-*/
-function checkMatch(card) {
-    // if there are no cards on the open list,
-    // return false after adding the open card to the list.
-    const cardTemplate = `${card.firstChild.getAttribute("class")} added to open card list.`;
-    if(openCards.length < 1) {
-        addToOpenCardList(card);
-    } else {
-        // if the same card is clicked, then just ignore.
-        if(openCards[0] === card) {
-            return;
-        }
-        addToOpenCardList(card);
-        if(cardsMatch(openCards[0],openCards[1])) {
-            cardsMatched();
-            removeMatchedEventListeners();
-            clearOpenCardList();
-            return true;
-        } else {
-            setTimeout(hideOpenCards,500);
-            clearTimeout(hideOpenCards);
-            return false;
-        }
-    }
+    const toClose = document.querySelectorAll(".remove");
+    toClose.forEach(function(card) {
+        console.log("Removing " + card);
+        card.classList.remove("show");
+        card.classList.remove("open");
+        card.classList.remove("remove");
+    });
+    addCardEventListeners();
 }
 
 /*
@@ -232,20 +231,6 @@ function cardsMatch(cardOne, cardTwo) {
 function removeMatchedEventListeners() {
     openCards[0].removeEventListener("click", cardClick);
     openCards[1].removeEventListener("click", cardClick);
-}
-
-/*
-* Remove all cards from the open cards list.
-*/
-function clearOpenCardList() {
-    openCards = [];
-}
-
-/*
-* Add to the list of open cards.
-*/
-function addToOpenCardList(card) {
-    openCards.push(card);
 }
 
 /*
@@ -338,3 +323,11 @@ function clickOutside(e) {
 	}
 }
 
+/*
+ * Game over screen's play again button
+ */
+const button  = document.getElementById("play-again");
+button.addEventListener("click", function() {
+    gameOverScreen.style.display = "none";
+        generateDeck();
+});
