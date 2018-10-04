@@ -177,8 +177,8 @@ function cardClick(event) {
         } else {
             openCards[0].classList.add("remove");
             openCards[1].classList.add("remove");
-            setTimeout(hideOpenCards,500);
         }
+        setTimeout(hideOpenCards,500);
         openCards = [];
         
     }
